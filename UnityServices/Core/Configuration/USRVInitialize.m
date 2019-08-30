@@ -270,25 +270,9 @@ static dispatch_once_t onceToken;
     
     [self.configuration setWebViewData:[self webViewData]];
     
-    NSString *osVersion = [USRVDevice getOsVersion];
-    NSArray<NSString *> *splitString = [osVersion componentsSeparatedByString:@"."];
-    NSString *osMajorVersionString = [splitString objectAtIndex:0];
-    int osMajorVersion = [osMajorVersionString intValue];
+    USRVLogDebug(@"Using WKWebView");
+    [USRVWKWebViewApp create:self.configuration];
     
-    if (osMajorVersion > 8) {
-        USRVLogDebug(@"Using WKWebView");
-        [USRVWKWebViewApp create:self.configuration];
-        
-        if (![USRVWKWebViewApp getCurrentApp]) {
-            USRVLogDebug(@"Error creating WKWebView, falling back to UIWebView");
-            [USRVWebViewApp create:self.configuration];
-        }
-    }
-    else {
-        USRVLogDebug(@"Using UIWebView");
-        [USRVWebViewApp create:self.configuration];
-    }
-
     id nextState = [[USRVInitializeStateComplete alloc] initWithConfiguration:self.configuration];
     return nextState;
 }

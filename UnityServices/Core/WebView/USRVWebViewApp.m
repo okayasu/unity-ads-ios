@@ -20,26 +20,6 @@ static USRVWebViewApp *currentApp = NULL;
     USRVWebViewApp *webViewApp = [[USRVWebViewApp alloc] initWithConfiguration:configuration];
 
     dispatch_sync(dispatch_get_main_queue(), ^(void) {
-        UIWebView *webView = NULL;
-        webView = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, 1024,768)];
-        webView.mediaPlaybackRequiresUserAction = NO;
-        webView.allowsInlineMediaPlayback = YES;
-        [webView setBackgroundColor:[UIColor clearColor]];
-        [webView setOpaque:false];
-        webView.scrollView.bounces = NO;
-        [webViewApp setWebView:webView];
-        NSString * const localWebViewUrl = [USRVSdkProperties getLocalWebViewFile];
-        NSString *queryString = [NSString stringWithFormat:@"%1$@?platform=ios&origin=%2$@", localWebViewUrl, [USRVWebViewApp urlEncode:[configuration webViewUrl]]];
-        
-        if (configuration.webViewVersion) {
-            queryString = [queryString stringByAppendingString:[NSString stringWithFormat:@"&version=%1@", [USRVWebViewApp urlEncode:configuration.webViewVersion]]];
-        }
-        
-        [(UIWebView *)[webViewApp webView] loadData:[NSData dataWithContentsOfFile:localWebViewUrl] MIMEType:@"text/html" textEncodingName:@"utf-8" baseURL:[NSURL URLWithString:queryString]];
-
-        [webViewApp createBackgroundView];
-        [webViewApp.backgroundView placeViewToBackground];
-        [webViewApp placeWebViewToBackgroundView];
     });
 
     [USRVWebViewApp setCurrentApp:webViewApp];
@@ -78,9 +58,6 @@ static USRVWebViewApp *currentApp = NULL;
 
 - (void)invokeJavascriptString:(NSString *)javaScriptString {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.webView) {
-            [(UIWebView *)self.webView stringByEvaluatingJavaScriptFromString:javaScriptString];
-        }
     });
 }
 
